@@ -1,10 +1,12 @@
 package graficadora;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 /**
  *
  * @author jorge
@@ -26,9 +28,10 @@ public class Interfaz extends JFrame implements ActionListener{
 	JTextField distanciaTextField;
 	JButton aceptarDistancia;
 
+	ArrayList<int[]> caminoPuntos;
 
 
-	public static plano plano;
+	public static PlanoR2 plano;
 
 
 	public Interfaz() {
@@ -37,9 +40,7 @@ public class Interfaz extends JFrame implements ActionListener{
 		setBounds(300, 300, 510, 600);
 		setLayout(new BorderLayout());
 		setLocationRelativeTo( null );
-
-
-		plano = new plano();
+		setResizable(false);
 
 		//Configuración del Boton
 		JButton start = new JButton("Iniciar");
@@ -47,15 +48,21 @@ public class Interfaz extends JFrame implements ActionListener{
 		start.setText("Iniciar");
 
 		//Bordes al panel
-		add( plano, BorderLayout.CENTER);
-		add(start, BorderLayout.SOUTH);
-
-		setVisible( true );
+		
+		caminoPuntos = new ArrayList<>();
 
 		funcionObjetivo = new String[3];
 
 		int numRestricciones = Integer.parseInt(JOptionPane.showInputDialog(this, "Inserte el número de restricciones"));
 		restricciones = new String[numRestricciones][4];
+		
+		plano = new PlanoR2(this);
+		
+		add( plano, BorderLayout.CENTER);
+		add(start, BorderLayout.SOUTH);
+
+		setVisible( true );
+
 
 
 		DialogoRegistrarRestriccion dialogoRestricciones = new DialogoRegistrarRestriccion(numRestricciones, this,plano);
@@ -85,7 +92,7 @@ public class Interfaz extends JFrame implements ActionListener{
 			dialogoCoordenadaInicial();
 			return;
 		}
-		plano.dibujarPunto(x, y);
+		caminoPuntos.add(new int[] {x,y});
 		dialogoFuncionObjetivo();	
 	}
 
@@ -147,13 +154,14 @@ public class Interfaz extends JFrame implements ActionListener{
 					}
 
 			if(mejoresCoord[0] != x && mejoresCoord[1] != y) {
-				plano.dibujarPunto(mejoresCoord[0], mejoresCoord[1]);
 				x = mejoresCoord[0];
 				y = mejoresCoord[1];
+				caminoPuntos.add(new int[] {mejoresCoord[0], mejoresCoord[1]});
 			}
 			else
 				enOptimoLocal = true;
 		}
+		plano.repaint();		
 	}
 
 	public int calcularFO(int x, int y) {

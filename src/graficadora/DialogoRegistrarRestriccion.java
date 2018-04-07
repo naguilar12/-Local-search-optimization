@@ -18,10 +18,10 @@ public class DialogoRegistrarRestriccion extends JDialog implements ActionListen
 
 	int numRestricciones;
 	Interfaz interfaz;
-	plano plano;
+	PlanoR2 plano;
 
 
-	public DialogoRegistrarRestriccion(int numRestricciones, Interfaz interfaz, plano plano) {
+	public DialogoRegistrarRestriccion(int numRestricciones, Interfaz interfaz, PlanoR2 plano) {
 		this.plano = plano;
 		this.interfaz = interfaz;
 		this.numRestricciones = numRestricciones;
@@ -56,7 +56,7 @@ public class DialogoRegistrarRestriccion extends JDialog implements ActionListen
 		add(submit);
 	}
 
-	public void dibujarRestricciones() {
+	public void agregarRestricciones() {
 		
 		String[][] restricciones = interfaz.getRestricciones();
 
@@ -65,10 +65,6 @@ public class DialogoRegistrarRestriccion extends JDialog implements ActionListen
 			restricciones[i][1] = textRestricciones[i][1].getText();
 			restricciones[i][2] = textRestricciones[i][2].getText();
 			restricciones[i][3] = textRestricciones[i][3].getText();
-			int y1 = (Integer.parseInt(restricciones[i][3]) - Integer.parseInt(restricciones[i][0]) *(-500))/ Integer.parseInt(restricciones[i][1]);
-			int y2 = (Integer.parseInt(restricciones[i][3]) - Integer.parseInt(restricciones[i][0]) *(500))/ Integer.parseInt(restricciones[i][1]);
-			
-			plano.dibujarRestriccion(-500, y1 , 500, y2);
 		}
 	}
 
@@ -77,7 +73,8 @@ public class DialogoRegistrarRestriccion extends JDialog implements ActionListen
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getActionCommand().equals(ACEPTAR)) {
-			dibujarRestricciones();
+			agregarRestricciones();
+			plano.repaint();
 			setVisible(false);
 			interfaz.dialogoCoordenadaInicial();
 
