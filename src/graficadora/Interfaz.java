@@ -35,17 +35,12 @@ public class Interfaz extends JFrame implements ActionListener{
 
 
 	public Interfaz() {
-		setSize(new Dimension(1000, 1000));
+		setSize(new Dimension(700, 700));
 		setDefaultCloseOperation(Interfaz.EXIT_ON_CLOSE);
-		setBounds(300, 300, 510, 600);
 		setLayout(new BorderLayout());
 		setLocationRelativeTo( null );
 		setResizable(false);
 
-		//Configuración del Boton
-		JButton start = new JButton("Iniciar");
-		start.addActionListener(this);
-		start.setText("Iniciar");
 
 		//Bordes al panel
 		
@@ -59,7 +54,6 @@ public class Interfaz extends JFrame implements ActionListener{
 		plano = new PlanoR2(this);
 		
 		add( plano, BorderLayout.CENTER);
-		add(start, BorderLayout.SOUTH);
 
 		setVisible( true );
 

@@ -14,8 +14,10 @@ import javax.swing.JPanel;
 public class PlanoR2 extends JPanel{
 
 	Interfaz interfaz;
+	CartesianPlane c;
 
 	public PlanoR2(Interfaz interfaz) {
+		setSize(700, 700);
 		this.interfaz = interfaz;
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 	}
@@ -27,9 +29,12 @@ public class PlanoR2 extends JPanel{
 		pGraphics.fillRect( 0, 0, getWidth( ), getHeight( ) );
 
 		pGraphics.setColor(Color.red);
-
-		pGraphics.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
-		pGraphics.drawLine(this.getWidth()/2, 0,this.getWidth()/2 , this.getHeight());
+		
+//		pGraphics.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
+//		pGraphics.drawLine(this.getWidth()/2, 0,this.getWidth()/2 , this.getHeight());
+//		
+		c = new CartesianPlane();
+		c.paintComponent(pGraphics);
 
 		for ( String[] restriccion : interfaz.restricciones) {
 			if(restriccion[0]!=null) {
@@ -81,12 +86,17 @@ public class PlanoR2 extends JPanel{
 
 	private int coord_x(double x)
 	{
-		double real_x = x+this.getWidth()/2;
+		int xLength = (CartesianPlane.X_AXIS_SECOND_X_COORD - CartesianPlane.X_AXIS_FIRST_X_COORD)
+				/ CartesianPlane.XCOORDNUMBERS;
+
+		double real_x = x*xLength+CartesianPlane.X_AXIS_FIRST_X_COORD;
 		return (int)real_x;
 	}
 	private int coord_y(double y)
 	{
-		double real_y = -y+this.getHeight()/2;
+		int yLength = (CartesianPlane.Y_AXIS_SECOND_Y_COORD - CartesianPlane.Y_AXIS_FIRST_Y_COORD)
+				/ CartesianPlane.YCOORDNUMBERS;
+		double real_y = -y*yLength+CartesianPlane.Y_AXIS_SECOND_Y_COORD;
 
 		return (int) real_y;
 	}
