@@ -12,18 +12,23 @@ import java.util.ArrayList;
  * @author jorge
  */
 public class Interfaz extends JFrame implements ActionListener{
-	
+
 	int xInicial;
 	int yInicial;
-	
+
 	int iteracion = 1;
 	int punto;
-	int foInicial;
+	double foInicial;
 
 	String[][] restricciones;
 	int x;
 	int y;
 
+	//1. a
+	//2. b
+	//3. objetivo
+	//4. exponentex
+	//5. exponentey
 	String[] funcionObjetivo;
 
 	int distancia;
@@ -58,7 +63,7 @@ public class Interfaz extends JFrame implements ActionListener{
 
 		caminoPuntos = new ArrayList<>();
 
-		funcionObjetivo = new String[3];
+		funcionObjetivo = new String[5];
 
 		int numRestricciones = Integer.parseInt(JOptionPane.showInputDialog(this, "Inserte el número de restricciones"));
 		restricciones = new String[numRestricciones][4];
@@ -101,10 +106,12 @@ public class Interfaz extends JFrame implements ActionListener{
 		dialogoFuncionObjetivo();	
 	}
 
-	public void valoresFO(String valx, String valy, String objetivo) {
+	public void valoresFO(String valx, String valy, String objetivo, String exponentex, String exponentey) {
 		funcionObjetivo[0] = valx;
 		funcionObjetivo[1] = valy;
 		funcionObjetivo[2] = objetivo;
+		funcionObjetivo[3] = exponentex;
+		funcionObjetivo[4] = exponentey;
 
 		dialogoDistancia = new JDialog();
 		dialogoDistancia.setSize(200, 100);
@@ -137,6 +144,9 @@ public class Interfaz extends JFrame implements ActionListener{
 			cumple = cumple && ( (((a*x+b*y)>=ladoDerecho) && signo.equals(">="))
 					|| (((a*x+b*y)<=ladoDerecho) && signo.equals("<=")) 
 					|| (((a*x+b*y)==ladoDerecho) && signo.equals("=")));
+
+			if(!cumple)
+				System.out.println(a+b+signo + "RESULTADO: " + (a*x+b*y));
 		}
 
 		return cumple;
@@ -145,7 +155,7 @@ public class Interfaz extends JFrame implements ActionListener{
 	public void empezarBusquedaLocal() {
 
 		boolean enOptimoLocal = false; 
-		int mejor = calcularFO(x, y);
+		double mejor = calcularFO(x, y);
 		int[] mejoresCoord = new int[] {x,y};
 		foInicial = calcularFO(xInicial, yInicial); 
 
@@ -182,6 +192,7 @@ public class Interfaz extends JFrame implements ActionListener{
 				y = mejoresCoord[1];
 				caminoPuntos.add(new int[] {mejoresCoord[0], mejoresCoord[1]});
 				System.out.println(mejoresCoord[0] + " " + mejoresCoord[1]);
+				System.out.println(calcularFO(x, y));
 			}
 			else {
 				enOptimoLocal = true;
@@ -194,17 +205,17 @@ public class Interfaz extends JFrame implements ActionListener{
 		new DialogoOptimizacionRecargada(this);
 
 	}
-	
+
 	public void buscarConPuntosUsuario() {
-		
-		int mejor = calcularFO(caminoPuntos.get(caminoPuntos.size()-1)[0], caminoPuntos.get(caminoPuntos.size()-1)[1]);
+
+		double mejor = calcularFO(caminoPuntos.get(caminoPuntos.size()-1)[0], caminoPuntos.get(caminoPuntos.size()-1)[1]);
 		int xMejor = -1;
 		int yMejor = -1;
-		
+
 		for (int i = 0; i < tresPuntosUsuario.length; i++) {
 			int nuevox = x + longitudPasoUsuario*tresPuntosUsuario[i][0];
 			int nuevoy = y + longitudPasoUsuario*tresPuntosUsuario[i][1];
-			
+
 			if(satisfaceRestricciones(nuevox, nuevoy)
 					&& ((mejor < calcularFO(nuevox, nuevoy) && funcionObjetivo[2].equals("max"))
 							||(mejor > calcularFO(nuevox, nuevoy) && funcionObjetivo[2].equals("min")))) {
@@ -212,29 +223,29 @@ public class Interfaz extends JFrame implements ActionListener{
 				xMejor = nuevox;
 				yMejor = nuevoy;
 			}
-			
+
 			String factible = satisfaceRestricciones(nuevox, nuevoy)?"Si":"No";
 			data.add(new String[]{iteracion+"", (punto++)+"", nuevox+"", nuevoy+"", factible, calcularFO(nuevox, nuevoy)+"", (foInicial-calcularFO(nuevox, nuevoy)) + ""});
 		}
-		
+
 		if(xMejor == -1 && yMejor == -1) {
 			TableDialog t = new TableDialog(data);
 			t.setLocationRelativeTo(this);
 			t.setVisible(true);
 		}
-		
+
 		else {
 			x = xMejor;
 			y = yMejor;
 			caminoPuntos.add(new int[] {x, y});
 			empezarBusquedaLocal();
 		}
-		
-		
+
+
 	}
 
-	public int calcularFO(int x, int y) {
-		return Integer.parseInt(funcionObjetivo[0])*x+Integer.parseInt(funcionObjetivo[1])*y;
+	public double calcularFO(int x, int y) {
+		return Integer.parseInt(funcionObjetivo[0])*Math.pow(x, Integer.parseInt(funcionObjetivo[3]))+Integer.parseInt(funcionObjetivo[1])*Math.pow(y, Integer.parseInt(funcionObjetivo[4]));
 	}
 
 	@Override
@@ -251,7 +262,6 @@ public class Interfaz extends JFrame implements ActionListener{
 	}
 
 	public static void main(String[] args) {
-
 		//Creando la ventana y el plano de dibujo
 		Interfaz frame = new Interfaz();
 	}

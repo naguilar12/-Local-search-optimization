@@ -19,13 +19,16 @@ public class DialogoFuncionObjetivo extends JDialog implements ActionListener{
 	JTextField valorx;
 	JTextField valory;
 	JTextField objetivo;
+	JTextField exponentex;
+	JTextField exponentey;
+
 	
 	
 	JButton aceptar;
 	
 	public DialogoFuncionObjetivo (Interfaz interfaz) {
 		this.interfaz = interfaz; 
-		setLayout(new GridLayout(4, 2));
+		setLayout(new GridLayout(6, 2));
 		setSize(250, 200);
 		
 		setTitle("Valores funcion objetivo");
@@ -36,13 +39,24 @@ public class DialogoFuncionObjetivo extends JDialog implements ActionListener{
 		aceptar = new JButton("Aceptar");
 		aceptar.setActionCommand(ACEPTAR);
 		aceptar.addActionListener(this);
+		exponentex = new JTextField();
+		exponentey = new JTextField();
 		
 		add(new JLabel("Coeficiente x"));
 		add(valorx);
+		
+		add(new JLabel("Exponente x"));
+		add(exponentex);
+		
 		add(new JLabel("Coeficiente y"));
 		add(valory);
+		
+		add(new JLabel("Exponente y"));
+		add(exponentey);
+		
 		add(new JLabel("max/min"));
 		add(objetivo);
+		
 		add(new JLabel(""));
 		add(aceptar);
 		
@@ -51,7 +65,7 @@ public class DialogoFuncionObjetivo extends JDialog implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getActionCommand().equals(ACEPTAR)) {
-			interfaz.valoresFO(valorx.getText(), valorx.getText(), objetivo.getText());
+			interfaz.valoresFO(valorx.getText(), valorx.getText(), objetivo.getText(), exponentex.getText(), exponentey.getText());
 			setVisible(false);
 		}
 	}

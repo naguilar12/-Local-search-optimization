@@ -29,22 +29,37 @@ public class PlanoR2 extends JPanel{
 		pGraphics.fillRect( 0, 0, getWidth( ), getHeight( ) );
 
 		pGraphics.setColor(Color.red);
-		
-//		pGraphics.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
-//		pGraphics.drawLine(this.getWidth()/2, 0,this.getWidth()/2 , this.getHeight());
-//		
+
+		//		pGraphics.drawLine(0, this.getHeight()/2, this.getWidth(), this.getHeight()/2);
+		//		pGraphics.drawLine(this.getWidth()/2, 0,this.getWidth()/2 , this.getHeight());
+		//		
 		c = new CartesianPlane();
 		c.paintComponent(pGraphics);
 
 		for ( String[] restriccion : interfaz.restricciones) {
 			if(restriccion[0]!=null) {
-				int y1 = (Integer.parseInt(restriccion[3]) - Integer.parseInt(restriccion[0]) *(-500))/ Integer.parseInt(restriccion[1]);
-				int y2 = (Integer.parseInt(restriccion[3]) - Integer.parseInt(restriccion[0]) *(500))/ Integer.parseInt(restriccion[1]);
-
-				dibujarRestriccion(pGraphics,-500, y1 , 500, y2);
+				Color color;
+				if(restriccion[2].equals(">="))
+					color = Color.BLUE;
+				else if(restriccion[2].equals("<="))
+					color = Color.PINK;
+				else 
+					color = Color.MAGENTA;
+				 
+				int x1 = -500;
+				int x2 = 500;
+				if (Integer.parseInt(restriccion[1])!= 0) {
+					int y1 = (Integer.parseInt(restriccion[3]) - Integer.parseInt(restriccion[0]) *(-500))/ Integer.parseInt(restriccion[1]);
+					int y2 = (Integer.parseInt(restriccion[3]) - Integer.parseInt(restriccion[0]) *(500))/ Integer.parseInt(restriccion[1]);
+					dibujarRestriccion(pGraphics,x1, y1 , x2, y2, color); 
+				}
+				else {
+					int x = Integer.parseInt(restriccion[3])/Integer.parseInt(restriccion[0]);
+					dibujarRestriccion(pGraphics,x, -9999 , x, 9999, color);
+				}
 			}
 		}
-		
+
 		for (int[] punto : interfaz.caminoPuntos) {
 			if(interfaz.caminoPuntos.indexOf(punto) == 0)
 				dibujarPunto(pGraphics, punto[0], punto[1], Color.GREEN);
@@ -73,8 +88,8 @@ public class PlanoR2 extends JPanel{
 		}
 	}
 
-	public void dibujarRestriccion(Graphics2D pGraphics2d,int x1, int y1, int x2, int y2){
-		pGraphics2d.setColor(Color.BLUE);
+	public void dibujarRestriccion(Graphics2D pGraphics2d,int x1, int y1, int x2, int y2, Color color){
+		pGraphics2d.setColor(color);
 		pGraphics2d.drawLine(coord_x(x1), coord_y(y1), coord_x(x2), coord_y(y2));
 	}
 
@@ -87,16 +102,16 @@ public class PlanoR2 extends JPanel{
 	private int coord_x(double x)
 	{
 		int xLength = (CartesianPlane.X_AXIS_SECOND_X_COORD - CartesianPlane.X_AXIS_FIRST_X_COORD)
-				/ CartesianPlane.XCOORDNUMBERS;
+				/ (CartesianPlane.XMAXNUM - CartesianPlane.XMINNUM) ;
 
-		double real_x = x*xLength+CartesianPlane.X_AXIS_FIRST_X_COORD;
+		double real_x = x*xLength + CartesianPlane.Y_AXIS_X_COORD;
 		return (int)real_x;
 	}
 	private int coord_y(double y)
 	{
 		int yLength = (CartesianPlane.Y_AXIS_SECOND_Y_COORD - CartesianPlane.Y_AXIS_FIRST_Y_COORD)
-				/ CartesianPlane.YCOORDNUMBERS;
-		double real_y = -y*yLength+CartesianPlane.Y_AXIS_SECOND_Y_COORD;
+				/ (CartesianPlane.YMAXNUM - CartesianPlane.YMINNUM);
+		double real_y = -y*yLength + CartesianPlane.X_AXIS_Y_COORD;
 
 		return (int) real_y;
 	}
