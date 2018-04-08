@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 public class DialogoFuncionObjetivo extends JDialog implements ActionListener{
@@ -65,8 +66,21 @@ public class DialogoFuncionObjetivo extends JDialog implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getActionCommand().equals(ACEPTAR)) {
-			interfaz.valoresFO(valorx.getText(), valorx.getText(), objetivo.getText(), exponentex.getText(), exponentey.getText());
-			setVisible(false);
+			try {
+				Integer.parseInt(valorx.getText());
+				Integer.parseInt(valory.getText());
+				if(!objetivo.getText().equals("max") && !objetivo.getText().equals("min"))
+					throw new Exception();
+				Integer.parseInt(exponentex.getText());
+				Integer.parseInt(exponentey.getText());		
+				
+				interfaz.valoresFO(valorx.getText(), valory.getText(), objetivo.getText(), exponentex.getText(), exponentey.getText());
+				setVisible(false);
+				
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(interfaz, "Ingrese numeros validos y en el campo de objetivo escriba max o min sin espacios");
+			}
+			
 		}
 	}
 

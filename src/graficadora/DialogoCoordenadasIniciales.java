@@ -23,9 +23,10 @@ public class DialogoCoordenadasIniciales extends JDialog implements ActionListen
 	
 	
 	public DialogoCoordenadasIniciales(Interfaz interfaz) {
+		setTitle("Punto Inicial");
 		this.interfaz = interfaz; 
 		setLayout(new GridLayout(3, 2));
-		setSize(200, 200);
+		setSize(200, 150);
 		
 		x0Text = new JTextField();
 		y0Text = new JTextField();

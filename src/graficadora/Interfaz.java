@@ -53,6 +53,7 @@ public class Interfaz extends JFrame implements ActionListener{
 	ArrayList<String[]> data = new ArrayList<>();
 
 	public Interfaz() {
+		JOptionPane.showMessageDialog(this, "Restricciones:\n- Mayor o igual: Azul\n- Menor o igual: Verde\n- Igualdad: Magenta");
 		setSize(new Dimension(700, 700));
 		setDefaultCloseOperation(Interfaz.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
@@ -62,6 +63,7 @@ public class Interfaz extends JFrame implements ActionListener{
 		//Bordes al panel
 
 		caminoPuntos = new ArrayList<>();
+		
 
 		funcionObjetivo = new String[5];
 
@@ -145,8 +147,6 @@ public class Interfaz extends JFrame implements ActionListener{
 					|| (((a*x+b*y)<=ladoDerecho) && signo.equals("<=")) 
 					|| (((a*x+b*y)==ladoDerecho) && signo.equals("=")));
 
-			if(!cumple)
-				System.out.println(a+b+signo + "RESULTADO: " + (a*x+b*y));
 		}
 
 		return cumple;
@@ -191,8 +191,6 @@ public class Interfaz extends JFrame implements ActionListener{
 				x = mejoresCoord[0];
 				y = mejoresCoord[1];
 				caminoPuntos.add(new int[] {mejoresCoord[0], mejoresCoord[1]});
-				System.out.println(mejoresCoord[0] + " " + mejoresCoord[1]);
-				System.out.println(calcularFO(x, y));
 			}
 			else {
 				enOptimoLocal = true;

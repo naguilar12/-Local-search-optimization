@@ -42,7 +42,7 @@ public class PlanoR2 extends JPanel{
 				if(restriccion[2].equals(">="))
 					color = Color.BLUE;
 				else if(restriccion[2].equals("<="))
-					color = Color.PINK;
+					color = Color.GREEN;
 				else 
 					color = Color.MAGENTA;
 				 
