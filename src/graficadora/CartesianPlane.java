@@ -16,11 +16,13 @@ class CartesianPlane {
 	public static final int X_AXIS_FIRST_X_COORD = 50;
 	public static final int X_AXIS_SECOND_X_COORD = 600;
 	public static final int X_AXIS_Y_COORD = 600;
+	//public static final int X_AXIS_Y_COORD = 50 + (600-50)/2;
 
 	// y-axis coord constants
 	public static final int Y_AXIS_FIRST_Y_COORD = 50;
 	public static final int Y_AXIS_SECOND_Y_COORD = 600;
 	public static final int Y_AXIS_X_COORD = 50;
+	//public static final int Y_AXIS_X_COORD = 50 + (600-50)/2;
 
 	//arrows of axis are represented with "hipotenuse" of 
 	//triangle

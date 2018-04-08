@@ -12,6 +12,13 @@ import java.util.ArrayList;
  * @author jorge
  */
 public class Interfaz extends JFrame implements ActionListener{
+	
+	int xInicial;
+	int yInicial;
+	
+	int iteracion = 1;
+	int punto;
+	int foInicial;
 
 	String[][] restricciones;
 	int x;
@@ -33,6 +40,12 @@ public class Interfaz extends JFrame implements ActionListener{
 
 	public static PlanoR2 plano;
 
+	int[][] tresPuntosUsuario = new int[3][2];
+	int longitudPasoUsuario;
+
+	boolean conPuntosUsuario;
+
+	ArrayList<String[]> data = new ArrayList<>();
 
 	public Interfaz() {
 		setSize(new Dimension(700, 700));
@@ -41,18 +54,17 @@ public class Interfaz extends JFrame implements ActionListener{
 		setLocationRelativeTo( null );
 		setResizable(false);
 
-
 		//Bordes al panel
-		
+
 		caminoPuntos = new ArrayList<>();
 
 		funcionObjetivo = new String[3];
 
 		int numRestricciones = Integer.parseInt(JOptionPane.showInputDialog(this, "Inserte el número de restricciones"));
 		restricciones = new String[numRestricciones][4];
-		
+
 		plano = new PlanoR2(this);
-		
+
 		add( plano, BorderLayout.CENTER);
 
 		setVisible( true );
@@ -86,7 +98,6 @@ public class Interfaz extends JFrame implements ActionListener{
 			dialogoCoordenadaInicial();
 			return;
 		}
-		caminoPuntos.add(new int[] {x,y});
 		dialogoFuncionObjetivo();	
 	}
 
@@ -132,30 +143,94 @@ public class Interfaz extends JFrame implements ActionListener{
 	}
 
 	public void empezarBusquedaLocal() {
-		boolean enOptimoLocal = false;
 
+		boolean enOptimoLocal = false; 
 		int mejor = calcularFO(x, y);
-		int[] mejoresCoord = new int[2];
+		int[] mejoresCoord = new int[] {x,y};
+		foInicial = calcularFO(xInicial, yInicial); 
 
 		while(!enOptimoLocal) {
-			for (int i = -1; i <= 1; i++) 
-				for (int j = -1; j <= 1 ; j++)
-					if(satisfaceRestricciones(x+i*distancia, y+j*distancia)
-							&& ((mejor < calcularFO(x+i*distancia, y+j*distancia) && funcionObjetivo[2].equals("max"))
-									||(mejor > calcularFO(x+i*distancia, y+j*distancia) && funcionObjetivo[2].equals("min")))) {
-						mejoresCoord[0] = x+i*distancia;
-						mejoresCoord[1] = y+j*distancia;
-					}
+			punto = 0;
 
-			if(mejoresCoord[0] != x && mejoresCoord[1] != y) {
+			data.add(new String[]{iteracion+"", "Inicial", x+"", y+"", "Si", calcularFO(x, y)+"", ""});
+
+			for (int i = -1; i <= 1; i++) {
+				for (int j = -1; j <= 1 ; j++) {
+
+					int nuevox = x+i*distancia;
+					int nuevoy = y+j*distancia;
+
+					String factible = satisfaceRestricciones(nuevox, nuevoy)? "Si":"No";
+
+					if(satisfaceRestricciones(nuevox, nuevoy)
+							&& ((mejor < calcularFO(nuevox, nuevoy) && funcionObjetivo[2].equals("max"))
+									||(mejor > calcularFO(nuevox, nuevoy) && funcionObjetivo[2].equals("min")))) {
+
+						mejoresCoord[0] = nuevox;
+						mejoresCoord[1] = nuevoy;
+						mejor = calcularFO(nuevox, nuevoy);
+
+					}
+					if(nuevox != x || nuevoy!= y)
+						data.add(new String[]{iteracion+"", punto+"", nuevox+"", nuevoy+"", factible, calcularFO(nuevox, nuevoy)+"", (foInicial-calcularFO(x+i*distancia, y+j*distancia)) + ""});
+
+					punto++;
+				}
+			}
+			if(mejoresCoord[0] != x || mejoresCoord[1] != y) {
 				x = mejoresCoord[0];
 				y = mejoresCoord[1];
 				caminoPuntos.add(new int[] {mejoresCoord[0], mejoresCoord[1]});
+				System.out.println(mejoresCoord[0] + " " + mejoresCoord[1]);
 			}
-			else
+			else {
 				enOptimoLocal = true;
+			}
+			iteracion++;
 		}
-		plano.repaint();		
+
+		plano.repaint();
+
+		new DialogoOptimizacionRecargada(this);
+
+	}
+	
+	public void buscarConPuntosUsuario() {
+		
+		int mejor = calcularFO(caminoPuntos.get(caminoPuntos.size()-1)[0], caminoPuntos.get(caminoPuntos.size()-1)[1]);
+		int xMejor = -1;
+		int yMejor = -1;
+		
+		for (int i = 0; i < tresPuntosUsuario.length; i++) {
+			int nuevox = x + longitudPasoUsuario*tresPuntosUsuario[i][0];
+			int nuevoy = y + longitudPasoUsuario*tresPuntosUsuario[i][1];
+			
+			if(satisfaceRestricciones(nuevox, nuevoy)
+					&& ((mejor < calcularFO(nuevox, nuevoy) && funcionObjetivo[2].equals("max"))
+							||(mejor > calcularFO(nuevox, nuevoy) && funcionObjetivo[2].equals("min")))) {
+				mejor = calcularFO(nuevox, nuevoy);
+				xMejor = nuevox;
+				yMejor = nuevoy;
+			}
+			
+			String factible = satisfaceRestricciones(nuevox, nuevoy)?"Si":"No";
+			data.add(new String[]{iteracion+"", (punto++)+"", nuevox+"", nuevoy+"", factible, calcularFO(nuevox, nuevoy)+"", (foInicial-calcularFO(nuevox, nuevoy)) + ""});
+		}
+		
+		if(xMejor == -1 && yMejor == -1) {
+			TableDialog t = new TableDialog(data);
+			t.setLocationRelativeTo(this);
+			t.setVisible(true);
+		}
+		
+		else {
+			x = xMejor;
+			y = yMejor;
+			caminoPuntos.add(new int[] {x, y});
+			empezarBusquedaLocal();
+		}
+		
+		
 	}
 
 	public int calcularFO(int x, int y) {
@@ -168,6 +243,9 @@ public class Interfaz extends JFrame implements ActionListener{
 		if(e.getActionCommand().equals(ACEPTAR_DISTANCIA)) {
 			distancia = Integer.parseInt(distanciaTextField.getText());
 			dialogoDistancia.setVisible(false);
+			caminoPuntos.add(new int[] {x,y});
+			xInicial = x;
+			yInicial = y;
 			empezarBusquedaLocal();
 		}
 	}
